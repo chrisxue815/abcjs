@@ -114,7 +114,7 @@ JavaMidi.prototype.setChannel = function (number) {
 };
 
 JavaMidi.prototype.updatePos = function() {
-  while(this.playlist[this.playlistpos] && 
+  while(this.playlist[this.playlistpos] &&
 	this.playlist[this.playlistpos].time<this.timecount) {
     this.playlistpos++;
   }
@@ -128,7 +128,7 @@ JavaMidi.prototype.startNote = function (pitch, loudness, abcelem) {
   }
   this.updatePos();
   var self=this;
-  this.playlist.splice(this.playlistpos,0, {   
+  this.playlist.splice(this.playlistpos,0, {
     time:this.timecount,
 	funct:function() {
 	self.midiapi.playNote(pitch);
@@ -141,7 +141,7 @@ JavaMidi.prototype.endNote = function (pitch, length) {
   this.timecount+=length;
   this.updatePos();
   var self=this;
-  this.playlist.splice(this.playlistpos, 0, {   
+  this.playlist.splice(this.playlistpos, 0, {
     time:this.timecount,
 	funct:	function() {
 	self.midiapi.stopNote(pitch);
@@ -155,10 +155,10 @@ JavaMidi.prototype.addRest = function (length) {
 
 JavaMidi.prototype.embed = function(parent) {
 
-  
+
   this.playlink = setAttributes(document.createElement('a'), {
     style: "border:1px solid black; margin:3px;"
-    });  
+    });
   this.playlink.innerHTML = "play";
   var self = this;
   this.playlink.onmousedown = function() {
@@ -174,11 +174,11 @@ JavaMidi.prototype.embed = function(parent) {
 
   var stoplink = setAttributes(document.createElement('a'), {
     style: "border:1px solid black; margin:3px;"
-    });  
+    });
   stoplink.innerHTML = "stop";
   //var self = this;
   stoplink.onmousedown = function() {
-    self.stopPlay(); 
+    self.stopPlay();
   };
   parent.appendChild(stoplink);
   this.i=0;
@@ -210,11 +210,11 @@ JavaMidi.prototype.pausePlay = function() {
 };
 
 JavaMidi.prototype.doPlay = function() {
-  while(this.playlist[this.i] && 
+  while(this.playlist[this.i] &&
 	this.playlist[this.i].time <= this.currenttime) {
     this.playlist[this.i].funct();
     this.i++;
-  } 
+  }
   if (this.playlist[this.i]) {
     this.currenttime+=this.ticksperinterval;
   } else {
@@ -249,7 +249,7 @@ Midi.prototype.startTrack = function () {
 Midi.prototype.endTrack = function () {
   var tracklength = toHex(this.track.length/3+4,8);
   this.track = "MTrk"+tracklength+ // track header
-  this.track +  
+  this.track +
   '%00%FF%2F%00'; // track end
   this.trackstrings += this.track;
 };
@@ -288,7 +288,7 @@ Midi.prototype.addRest = function (length) {
 
 Midi.prototype.embed = function(parent, noplayer) {
 
-  var data="data:audio/midi," + 
+  var data="data:audio/midi," +
   "MThd%00%00%00%06%00%01"+toHex(this.trackcount,4)+"%01%e0"+ // header
   this.trackstrings;
 
@@ -298,10 +298,10 @@ Midi.prototype.embed = function(parent, noplayer) {
 //   embedContainer.innerHTML = '<object id="embed1" classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" codebase="http://www.apple.com/qtactivex/qtplugin.cab"><param name="src" value="' + data + '"></param><param name="Autoplay" value="false"></param><embed name="embed1" src="' + data + '" autostart="false" enablejavascript="true" /></object>';
 //   embed = document["embed1"];
 
-  
+
   var link = setAttributes(document.createElement('a'), {
     href: data
-    });  
+    });
   link.innerHTML = "download midi";
   parent.insertBefore(link,parent.firstChild);
 
@@ -311,7 +311,7 @@ Midi.prototype.embed = function(parent, noplayer) {
     src : data,
 	type : 'video/quicktime',
 	controller : 'true',
-	autoplay : 'false', 
+	autoplay : 'false',
 	loop : 'false',
 	enablejavascript: 'true',
 	style:'display:block; height: 20px;'
@@ -330,7 +330,7 @@ function encodeHex(s) {
 }
 
 function toHex(n, padding) {
-  var s = n.toString(16);
+  var s = n.toString(16).toUpperCase();
   while (s.length<padding) {
     s="0"+s;
   }
@@ -382,7 +382,7 @@ ABCJS.midi.MidiWriter = function(parent, options) {
     setTimeout(function() { // run on next event loop (once MIDIPlugin is loaded)
 	try { // activate MIDIPlugin
 	  MIDIPlugin.openPlugin();
-       
+
 	} catch(e) { // plugin not supported (download externals)
 	  var a = document.createElement("a");
 	  a.href = "http://java.sun.com/products/java-media/sound/soundbanks.html";
@@ -392,7 +392,7 @@ ABCJS.midi.MidiWriter = function(parent, options) {
 	}
       }, 0);
   }
-  
+
 };
 
 ABCJS.midi.MidiWriter.prototype.addListener = function(listener) {
@@ -406,13 +406,13 @@ ABCJS.midi.MidiWriter.prototype.notifySelect = function (abcelem) {
 };
 
 ABCJS.midi.MidiWriter.prototype.getMark = function() {
-  return {line:this.line, staff:this.staff, 
+  return {line:this.line, staff:this.staff,
 	  voice:this.voice, pos:this.pos};
 };
 
 ABCJS.midi.MidiWriter.prototype.getMarkString = function(mark) {
   mark = mark || this;
-  return "line"+mark.line+"staff"+mark.staff+ 
+  return "line"+mark.line+"staff"+mark.staff+
 	  "voice"+mark.voice+"pos"+mark.pos;
 };
 
@@ -492,9 +492,9 @@ ABCJS.midi.MidiWriter.prototype.writeABC = function(abctune) {
 	bpm = abctune.metaText.tempo.bpm;
       }
       this.qpm = bpm*duration*4;
-    } 
+    }
     this.midi.setTempo(this.qpm);
-    
+
     // visit each voice completely in turn
     // "problematic" because it means visiting only one staff+voice for each line each time
     this.staffcount=1; // we'll know the actual number once we enter the code
@@ -513,7 +513,7 @@ ABCJS.midi.MidiWriter.prototype.writeABC = function(abctune) {
 	this.midi.endTrack();
       }
     }
-    
+
     this.midi.embed(this.parent);
   } catch (e) {
     this.parent.innerHTML="Couldn't write midi: "+e;
@@ -547,7 +547,7 @@ ABCJS.midi.MidiWriter.prototype.writeABCElement = function(elem) {
   case "note":
     this.writeNote(elem);
     break;
-    
+
   case "key":
     this.setKeySignature(elem);
     break;
@@ -558,9 +558,9 @@ ABCJS.midi.MidiWriter.prototype.writeABCElement = function(elem) {
   case "clef":
     break;
   default:
-    
+
   }
-  
+
 };
 
 
@@ -581,9 +581,9 @@ ABCJS.midi.MidiWriter.prototype.writeNote = function(elem) {
       var pitch= note.pitch;
       if (note.accidental) {
 	switch(note.accidental) { // change that pitch (not other octaves) for the rest of the bar
-	case "sharp": 
+	case "sharp":
 	  this.baraccidentals[pitch]=1; break;
-	case "flat": 
+	case "flat":
 	  this.baraccidentals[pitch]=-1; break;
 	case "natural":
 	  this.baraccidentals[pitch]=0; break;
@@ -593,21 +593,21 @@ ABCJS.midi.MidiWriter.prototype.writeNote = function(elem) {
 			this.baraccidentals[pitch]=-2; break;
 	}
       }
-      
+
       midipitches[i] = 60 + 12*this.extractOctave(pitch)+this.scale[this.extractNote(pitch)];
-      
+
       if (this.baraccidentals[pitch]!==undefined) {
 	midipitches[i] += this.baraccidentals[pitch];
       } else { // use normal accidentals
 	midipitches[i] += this.accidentals[this.extractNote(pitch)];
       }
     midipitches[i] += this.transpose;	// PER
-      
+
       this.midi.startNote(midipitches[i], 64, elem);
 
       if (note.startTie) {
 	this.tieduration=mididuration;
-      } 
+      }
     }
 
     for (i=0; i<elem.pitches.length; i++) {
@@ -634,8 +634,8 @@ ABCJS.midi.MidiWriter.prototype.writeNote = function(elem) {
 
 ABCJS.midi.MidiWriter.prototype.handleBar = function (elem) {
   this.baraccidentals = [];
-  
-  
+
+
   var repeat = (elem.type==="bar_right_repeat" || elem.type==="bar_dbl_repeat");
   var skip = (elem.startEnding)?true:false;
   var setvisited = (repeat || skip);
@@ -650,7 +650,7 @@ ABCJS.midi.MidiWriter.prototype.handleBar = function (elem) {
     if (skip || repeat) {
       if (this.visited[this.lastmark] === true) {
 	this.setJumpMark(this.getMark());
-      }  
+      }
     }
 
     if (setvisited) {
